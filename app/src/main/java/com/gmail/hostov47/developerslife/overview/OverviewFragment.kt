@@ -1,19 +1,23 @@
 package com.gmail.hostov47.developerslife.overview
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-
-import com.gmail.hostov47.developerslife.databinding.FragmentOverViewBinding
+import android.widget.ImageView
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import com.gmail.hostov47.developerslife.R
+import com.gmail.hostov47.developerslife.RootActivity
+import com.gmail.hostov47.developerslife.extensions.dpToIntPx
 import kotlinx.android.synthetic.main.fragment_over_view.*
 
 class OverviewFragment : Fragment() {
-    private val viewModel: OverviewViewModel by lazy {
-        ViewModelProviders.of(this).get(OverviewViewModel::class.java)
+    private lateinit var gifsPageAdapter: GifsPageAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        gifsPageAdapter = GifsPageAdapter(childFragmentManager)
     }
 
     override fun onCreateView(
@@ -21,17 +25,29 @@ class OverviewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val binding = FragmentOverViewBinding.inflate(inflater)
+        return inflater.inflate(R.layout.fragment_over_view, container, false)
+    }
 
-        // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
-        binding.lifecycleOwner = this
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupToolbar()
+        view_pager.adapter = gifsPageAdapter
+        tabs.setupWithViewPager(view_pager)
+    }
 
-        // Giving the binding access to the OverviewViewModel
-        binding.viewModel = viewModel
-        /*viewModel.listOfGifs.observe(viewLifecycleOwner, Observer {
-            content_image.setImageDrawable(it[0])
-        })*/
-        return binding.root
+    private fun setupToolbar() {
+        (requireActivity() as RootActivity).setSupportActionBar(toolbar)
+        val logo = if(toolbar.childCount == 2)
+            toolbar.getChildAt(1) as? ImageView
+        else null
+        logo?.scaleType = ImageView.ScaleType.CENTER_CROP
+        val lp = logo?.layoutParams as Toolbar.LayoutParams
+        lp?.let {
+            it.width = this.dpToIntPx(40)
+            it.height = this.dpToIntPx(40)
+            it.marginEnd = this.dpToIntPx(16)
+            logo.layoutParams = it
+        }
     }
 
 }

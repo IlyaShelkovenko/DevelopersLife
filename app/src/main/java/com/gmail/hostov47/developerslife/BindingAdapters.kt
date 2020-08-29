@@ -57,3 +57,16 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
             .into(imgView)
     }
 }
+
+/*@BindingAdapter("errorDownloadAction")
+fun bindGroup(group: androidx.constraintlayout.widget.Group,  status: DevLifeApiStatus?) {
+    when (status) {
+        DevLifeApiStatus.LOADING,
+        DevLifeApiStatus.DONE -> {
+            group.visibility = View.GONE
+        }
+        DevLifeApiStatus.ERROR -> {
+            group.visibility = View.VISIBLE
+        }
+    }
+}*/

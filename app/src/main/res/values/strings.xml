@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Developers Life</string>
+    <string name="str_download_err">Произошла ошибка при загрузке данных. Проверьте подключение к сети</string>
+    <string name="repeat_download_btn_lbl">Повторить</string>
 </resources>

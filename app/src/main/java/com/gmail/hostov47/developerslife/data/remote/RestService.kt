@@ -11,14 +11,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface RestService {
-    @GET("latest/{page}?json=true")
-    fun latest(@Path("page") page : Int = 0) : Deferred<ApiResponse>
-
-    @GET("hot/?json=true")
-    suspend fun hot(@Query("page") page : Int = 0) : List<GifRes>
-
-    @GET("top/?json=true")
-    suspend fun top(@Query("") page : Int = 0) : List<GifRes>
+    @GET("{gifCategory}/{page}?json=true")
+    fun getGifs(@Path("gifCategory") gifCategory : String, @Path("page") page : Int = 0) : Deferred<ApiResponse>
 }
+
 
 

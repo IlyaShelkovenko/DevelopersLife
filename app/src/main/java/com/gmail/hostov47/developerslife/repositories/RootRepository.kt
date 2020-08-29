@@ -33,7 +33,7 @@ object RootRepository {
             result(resultList)
         }
     }*/
-    fun getAllGifs(page : Int = 0) : Deferred<ApiResponse> {
-        return api.latest(page)
+    fun getAllGifs(gifCategory : String,page : Int = 0) : Deferred<ApiResponse> {
+        return api.getGifs(gifCategory, page)
     }
 }
