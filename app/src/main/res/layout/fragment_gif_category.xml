@@ -29,6 +29,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.25">
 
+
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -41,8 +42,8 @@
 
                 <ImageView
                     android:id="@+id/status_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/image_button_size56"
+                    android:layout_height="@dimen/image_button_size56"
                     app:devLifeApiStatus="@{viewModel.status}"
                     android:layout_gravity="center" />
 
@@ -54,9 +55,42 @@
                     android:textColor="@android:color/white"
                     android:textSize="16sp"/>
 
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|center">
+
+                <TextView
+                    android:id="@+id/tv_err_download"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/str_download_err"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:gravity="center"
+                    app:devLifeApiStatusText="@{viewModel.status}"/>
+
+                    <Button
+                        android:id="@+id/btn_repeat_download"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/repeat_download_btn_lbl"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_err_download"
+                        android:layout_marginTop="@dimen/spacing_normal_16"
+                        android:layout_marginBottom="@dimen/spacing_normal_16"
+                        app:devLifeApiStatusButton="@{viewModel.status}"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
             </FrameLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
+
 
         <ImageButton
             android:id="@+id/imBtn_back"

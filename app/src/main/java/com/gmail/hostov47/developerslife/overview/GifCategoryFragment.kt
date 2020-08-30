@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import com.gmail.hostov47.developerslife.R
 import com.gmail.hostov47.developerslife.databinding.FragmentGifCategoryBinding
@@ -44,8 +43,13 @@ class GifCategoryFragment : Fragment()  {
 
         viewModel.currImageUrl.observe(viewLifecycleOwner, Observer {
             checkButtons()
-            content_description.text = viewModel.listOfGifs.value?.get(viewModel.currImageIndex.value!!)?.description
+            if(it.isNotEmpty())
+                content_description.text = viewModel.sortedListFromDb.value?.get(viewModel.currImageIndex.value!!)?.description
         })
+
+        btn_repeat_download.setOnClickListener {
+            viewModel.handleRepeatDownLoadClick()
+        }
 
         checkButtons()
         imBtn_forward.setOnClickListener {

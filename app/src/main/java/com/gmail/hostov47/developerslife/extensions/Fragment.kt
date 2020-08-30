@@ -3,10 +3,8 @@
  */
 package com.gmail.hostov47.developerslife.extensions
 
-import android.content.Context
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 
 
 fun Fragment.dpToPx(dp: Int): Float {

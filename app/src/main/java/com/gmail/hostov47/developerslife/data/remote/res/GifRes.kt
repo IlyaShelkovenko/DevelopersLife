@@ -44,7 +44,7 @@ data class GifRes(
 
 data class ApiResponse(
     @Json(name = "result")
-    val result: List<GifRes>,
+    val result: MutableList<GifRes>,
     @Json(name = "totalCount")
     val totalCount: Int
 )

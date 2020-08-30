@@ -4,77 +4,85 @@
 
 package com.gmail.hostov47.developerslife.overview
 
-import android.util.Log
 import androidx.lifecycle.*
-import com.gmail.hostov47.developerslife.data.remote.res.GifRes
+import com.gmail.hostov47.developerslife.App
+import com.gmail.hostov47.developerslife.data.local.database.getDatabase
+import com.gmail.hostov47.developerslife.data.local.domain.Gif
 import com.gmail.hostov47.developerslife.repositories.RootRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
+import java.util.*
 
 enum class DevLifeApiStatus { LOADING, ERROR, DONE }
 
 class GifCategoryViewModel(private val gifCategory: String) : ViewModel() {
+    private val database = getDatabase(App.applicationContext())
+    private val repository = RootRepository(database, gifCategory)
+    private var page = 0
 
-    private val repository = RootRepository
+    val listOfGifs = repository.gifs
 
-    private var _listOfGifs = MutableLiveData<List<GifRes>>()
-    val listOfGifs: LiveData<List<GifRes>>
-        get() = _listOfGifs
+    private var _currImageIndex = MutableLiveData<Int>(0)
+    val currImageIndex: LiveData<Int>
+        get() = _currImageIndex
 
-    var currImageIndex: MutableLiveData<Int> = MutableLiveData<Int>(0)
 
-    var currImageUrl = Transformations.map(listOfGifs) {
-        //currImageDescription = it[currImageIndex.value!!].description
-        it[currImageIndex.value!!].gifURL
+    val sortedListFromDb = Transformations.map(listOfGifs){
+        if(it.isNotEmpty()) {
+            val list = mutableListOf(*listOfGifs.value?.toTypedArray()!!)
+            Collections.sort(list, Collections.reverseOrder())
+            list
+        }else
+            mutableListOf()
+    }
+    var currImageUrl = Transformations.map(sortedListFromDb) {
+        if(it.isNotEmpty()) {
+            it[_currImageIndex.value!!].gifURL
+        }else ""
+
     } as MutableLiveData
 
-    /*var currImageDescription = Transformations.map(currImageIndex){
-        listOfGifs.value?.get(it)?.description
-    }*/
 
     private var viewModelJob = Job()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
-    private val _status = MutableLiveData<DevLifeApiStatus>()
+    private val _status = repository.status
     val status: LiveData<DevLifeApiStatus>
         get() = _status
 
     init {
-        getGifs(gifCategory,0)
-    }
-
-    fun getGifs(gifCategory: String, page: Int){
-        coroutineScope.launch {
-            var getListOfImagesDeferred = repository.getAllGifs(gifCategory,page)
-            try {
-                _status.value = DevLifeApiStatus.LOADING
-                val apiResponse = getListOfImagesDeferred.await()
-                _listOfGifs.value = apiResponse.result
-                _status.value = DevLifeApiStatus.DONE
-            } catch (e: Exception) {
-                _status.value = DevLifeApiStatus.ERROR
-            }
+        viewModelScope.launch {
+            repository.loadGifs(gifCategory,page)
         }
+
     }
 
     fun handleForwardClick(){
-        currImageIndex.value = currImageIndex.value?.inc()
-        currImageUrl.value = listOfGifs.value?.get(currImageIndex.value!!)?.gifURL
+        _currImageIndex.value = _currImageIndex.value?.inc()
+        currImageUrl.value = sortedListFromDb.value?.get(_currImageIndex.value!!)?.gifURL
+        if(currImageIndex.value == listOfGifs.value?.size?.minus(1)){
+            viewModelScope.launch {
+                repository.loadGifs(gifCategory, ++page)
+            }
+        }
     }
     fun handleBackClick() {
-        currImageIndex.value = currImageIndex.value!!.dec()
-        currImageUrl.value = listOfGifs.value?.get(currImageIndex.value!!)?.gifURL
+        _currImageIndex.value = _currImageIndex.value!!.dec()
+        currImageUrl.value = sortedListFromDb.value?.get(_currImageIndex.value!!)?.gifURL
+    }
+
+    fun handleRepeatDownLoadClick() {
+        viewModelScope.launch {
+            repository.loadGifs(gifCategory,        page)
+        }
     }
 
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
     }
-
-
 }
 
 class GifCategoryViewModelFactory(private val gifCategory: String) : ViewModelProvider.Factory {
@@ -85,3 +93,5 @@ class GifCategoryViewModelFactory(private val gifCategory: String) : ViewModelPr
         throw  IllegalArgumentException("unknown ViewModel class")
     }
 }
+
+

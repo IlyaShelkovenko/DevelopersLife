@@ -18,6 +18,7 @@
 package com.gmail.hostov47.developerslife
 
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
@@ -58,15 +59,27 @@ fun bindImage(imgView: ImageView, imgUrl: String?) {
     }
 }
 
-/*@BindingAdapter("errorDownloadAction")
-fun bindGroup(group: androidx.constraintlayout.widget.Group,  status: DevLifeApiStatus?) {
+@BindingAdapter("devLifeApiStatusText")
+fun bindStatusText(textView : TextView,  status: DevLifeApiStatus?) {
     when (status) {
         DevLifeApiStatus.LOADING,
         DevLifeApiStatus.DONE -> {
-            group.visibility = View.GONE
+            textView.visibility = View.GONE
         }
         DevLifeApiStatus.ERROR -> {
-            group.visibility = View.VISIBLE
+            textView.visibility = View.VISIBLE
         }
     }
-}*/
+}
+@BindingAdapter("devLifeApiStatusButton")
+fun bindStatusButton(button : Button,  status: DevLifeApiStatus?) {
+    when (status) {
+        DevLifeApiStatus.LOADING,
+        DevLifeApiStatus.DONE -> {
+            button.visibility = View.GONE
+        }
+        DevLifeApiStatus.ERROR -> {
+            button.visibility = View.VISIBLE
+        }
+    }
+}
